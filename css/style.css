@@ -1,0 +1,55 @@
+/*
+@dbr
+*/
+
+html,
+body {
+    height: 100%;
+    background-color: #fff;
+    color: #111;
+}
+
+.title,
+.subtitle {
+    color: #111;
+    text-align: center;
+}
+
+.footer {
+    background-color: #fff;
+    color: #999999;
+    bottom: 0px;
+    position: relative;
+    width: 100%;
+}
+
+label.label {
+  color: #333;
+}
+
+#progress-bar {
+  display: none;
+  margin-top: 15px;
+}
+
+#message-wrapper {
+  display: none;
+}
+
+#logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto 
+}
+
+#filename {
+  text-align: center;
+}
+
+.file-cta {
+  background-color: #1fbea5 !important;
+}
+
+#result-form {
+  display: none;
+}
