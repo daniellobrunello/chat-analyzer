@@ -2,7 +2,6 @@
 header('Content-type: application/json; charset=utf-8');
 
 mb_internal_encoding("UTF-8");
-
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 ini_set('memory_limit','4000M');
