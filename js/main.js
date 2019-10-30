@@ -6,6 +6,40 @@ if (window.location.toString().indexOf('https') === -1) {
     }, 500); 
 }
 
+var chatNames = [
+    "BFF chat",
+    "Family chat",
+    "Work is fun",
+    "party ppl"
+];
+
+
+function chatNameFiller() {
+    var idx = Math.floor(Math.random() * chatNames.length);
+    var name = chatNames[idx];
+    var ptext;
+
+    // for (var i = 0; i < name.length; i++) {
+    //     setTimeout((i) => {
+    //         ptext = name.substr(0, i);
+    //         $('#chat-name').attr('placeholder', ptext);
+    //     }, i * 300);   
+    // }
+}
+
+
+function rotateTitleFeatures(current) {
+    var featureCount = $('.title-feature').length;
+    var next = (current + 1) % featureCount;
+    
+    setTimeout(() => {
+        $($('.title-feature').get(current)).fadeOut(600, function() {
+            $($('.title-feature').get(next)).fadeIn();
+        });
+
+        rotateTitleFeatures(next);
+    }, 4000);
+}
 
 
 function inputIsOk() {
@@ -50,13 +84,14 @@ function showGUID(data) {
     $('#upload-form').hide();
     $('#result-form').show();
 
-    var url = "https://chat-analyzer.bruness.org/charts.php?chat=" + data.guid + "&pass=" + data.pass;
+    var url = "https://chat-analyser.com/charts.php?chat=" + data.guid + "&pass=" + data.pass;
 
     $('#server-guid').val(data.guid);
     $('#server-pass').val(data.pass);
     
     $('#chat-stats-url').text(url);
-    $('#chat-stats-url').attr("href", url);
+    $('#chat-stats-url').val(url);
+    $('#chat-stats-url-btn').attr("href", url);
 }
 
 
@@ -126,6 +161,7 @@ function uploadFile() {
 
 $(function() {
 
+
     $('input, select').on('change keyup', function() {
         if (inputIsOk()) {
             $('#upload-btn').prop('disabled', false);
@@ -151,7 +187,13 @@ $(function() {
     $('#upload-file').on('change', function() {
         var file = $(this).get(0);
         if (file.files.length > 0) {
+            if (file.files[0].type !== 'text/plain') {
+                alert("It should be a text file!");
+                return;
+            }
             $('#filename').html(file.files[0].name);
+            $('#name-field').removeClass('hidden').show();
+            $('#upload-btn-columns').removeClass('hidden').show();
         }
     })
 
@@ -162,5 +204,17 @@ $(function() {
         //$('#upload-form').submit();
         uploadFile();
     })
+
+
+    $('#option-1-howto-btn').on('click touchend', function() {
+        $('#option-1-howto').addClass('is-active');
+        $('.close-option-1-howto').on('click touchend', function() {
+            $('#option-1-howto').removeClass('is-active');
+        })
+    })
+
+    
+    rotateTitleFeatures(0);
+    chatNameFiller();
 
 });

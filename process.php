@@ -31,6 +31,8 @@ $separator_set = [
         "media_message" => "/(bild|audio|video|gif)\sweggelassen/"
     ]
 ];
+
+
 $guid = bin2hex(openssl_random_pseudo_bytes(16));
 $uploadDir = 'uploaded-chats/';
 
@@ -176,6 +178,13 @@ try {
     die();
 }
 // File upload complete.
+
+// Is there a name for the chat?
+$form_chatname = NULL;
+if(isset($_POST['chatname'])) {
+    $form_chatname = filter_input(INPUT_POST, 'chatname', FILTER_SANITIZE_STRING);
+    $form_chatname = substr($form_chatname, 0, 32);
+}
 
 
 // $uploadfile = $uploadDir . '9a9daaee25d0740b36dbdf7f44f36784.txt';
@@ -410,10 +419,14 @@ $final = [
     "userData" => $data
 ];
 
+if(isset($form_chatname) && !empty($form_chatname)) {
+    $final["chatName"] = $form_chatname;
+}
+
 
 $jsonEncoded = json_encode($final, JSON_UNESCAPED_UNICODE);
 $key = encrypt_and_save_chat($jsonEncoded, $guid);
-//unlink($uploadfile);
+unlink($uploadfile);
 
 $response = [
     "success" => true,

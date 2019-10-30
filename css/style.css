@@ -5,7 +5,7 @@
 html,
 body {
     height: 100%;
-    background-color: #fff;
+    background-color: #eff0eb;
     color: #111;
 }
 
@@ -15,13 +15,10 @@ body {
     text-align: center;
 }
 
-.footer {
-    background-color: #fff;
-    color: #999999;
-    bottom: 0px;
-    position: relative;
-    width: 100%;
+.hidden {
+  display: none !important;
 }
+
 
 label.label {
   color: #333;
@@ -46,10 +43,23 @@ label.label {
   text-align: center;
 }
 
-.file-cta {
-  background-color: #1fbea5 !important;
-}
-
 #result-form {
   display: none;
+}
+
+
+.title-feature {
+  display: none;
+}
+
+.title-feature:first-child {
+  display: block;
+}
+
+.__top-word {
+  border: 1px solid #7c3e6d;
+  border-radius: 999px;
+  padding: 7px;
+  float: left;
+  margin: 5px; */
 }

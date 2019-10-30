@@ -315,10 +315,11 @@ $monthly_chat_volume = array_values($monthly_chat_volume);
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/bulma.css">
+    <!-- <link rel="stylesheet" href="css/bulma.css"> -->
+    <link rel="stylesheet" href="css/bulma-custom.css">
     <link rel="stylesheet" href="css/style.css">
     
-    <title>WhatsApp Chat Analyzer Charts</title>
+    <title>Chat Analyzer Charts | WhatsApp Chat Results</title>
 </head>
 <body>
 
@@ -346,201 +347,225 @@ echo "\n</script>";
 ?>
 
 
-<div id="page-wrap">
-    <div class="section" style="padding-top:1rem">
-        <div id="upload-wrap" class="container">
-            
-            <div id="message-wrapper" class="columns">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="message" class="notification">
-                        <button class="delete"></button>
-                        <span id="message-text"></span>
-                    </div>
+
+<div class="hero is-primary is-bold">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">Chat Analysis</h1>
+            <h2 class="subtitle is-3">
+                Your results<?php if (isset($content->chatName)) echo " for '" . $content->chatName . "'";?>
+            </h2>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    
+        <div class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Messages</p>
+                    <p class="title"><?php echo number_format($content->userData->total->messages, 0, ",", "."); ?></p>
                 </div>
-                <div class="column"></div>
             </div>
-
-            <div class="columns">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <h1 class="title is-centered">WhatsApp Chat Analyzer</h1>
-                    <h2 class="subtitle">Your results</h2>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Words</p>
+                    <p class="title"><?php echo number_format($content->userData->total->words, 0, ",", "."); ?></p>
                 </div>
-                <div class="column"></div>
             </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Characters</p>
+                    <p class="title"><?php echo number_format($content->userData->total->chars, 0, ",", "."); ?></p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Punctuations</p>
+                    <p class="title"><?php echo number_format($content->userData->total->punctuation, 0, ",", "."); ?></p>
+                </div>
+            </div>
+        </div>
 
-            <br>
-            <br>
+        <?php   
+            // echo "Durchschnittlich <strong>" . number_format($content->userData->total->wordLen, 2, ",", ".") . "</strong> Zeichen pro Wort<br>";
+            // echo "Durchschnittlich <strong>" . number_format($content->userData->total->pctPerMsg, 2, ",", ".") . "</strong> Interpunktionen pro Nachricht<br>";
+        ?>
 
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div>
-                    <?php 
-                        echo "Von <strong>" .  $stats["firstMessage"][1] . "</strong> (von " . $stats["firstMessage"][0] . ") ";
-                        echo "bis <strong>" .  $stats["lastMessage"][1] . "</strong> (von " . $stats["lastMessage"][0] . ").";
-                    ?>
-                    </div>
-                    <div>
-                    <?php
-                        echo "<strong>" . number_format($content->userData->total->messages, 0, ",", ".") . "</strong> Nachrichten<br>"; 
-                        echo "<strong>" . number_format($content->userData->total->words, 0, ",", ".") . "</strong> Wörter<br>";
-                        echo "<strong>" . number_format($content->userData->total->chars, 0, ",", ".") . "</strong> Zeichen<br>";
-                        echo "<strong>" . number_format($content->userData->total->punctuation, 0, ",", ".") . "</strong> Interpunktionen<br>";
-                        echo "Durchschnittlich <strong>" . number_format($content->userData->total->wordLen, 2, ",", ".") . "</strong> Zeichen pro Wort<br>";
-                        echo "Durchschnittlich <strong>" . number_format($content->userData->total->pctPerMsg, 2, ",", ".") . "</strong> Interpunktionen pro Nachricht<br>";
-                    ?>
-                    </div>
-                    <br>
-                    <h2>Top 20 Wörter</h2>
-                    <div>
+    <div class="container">
+
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <h5 class="title is-5">First message</h5>
+                    <h6 class="subtitle is-7">by <?php echo $stats["firstMessage"][0] . " on " . $stats["firstMessage"][1]; ?></h6>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box">
+                    <h5 class="title is-5">Last message</h5>
+                    <h6 class="subtitle is-7">by <?php echo $stats["lastMessage"][0] . " on " . $stats["lastMessage"][1]; ?></h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <h3 class="title is-3">Top 20 Words</h2>
+                <div class="content">
+                    <ol type="1">
                     <?php 
                         $top20Count = 1;
                         $favWords = (array) $content->userData->total->vocabulary;
                         foreach($favWords as $word => $count) {
                             if ($top20Count > 20) break;
-
-                            echo $top20Count . ". " . $word . " (" . $count . "x)<br>";
+                            $size = round(pow(1.1021861, $top20Count));
+                            echo "<li class='top-word is-size-".$size."'>" . $top20Count . ". " . $word. " (" . $count . "x)</li>";
                             $top20Count += 1;
                         }
                     ?>
-                    </div>
-                    <br>
-                    <h2>Top 20 Emojis</h2>
-                    <div>
-                    <?php 
-                        $top20Count = 1;
-                        $favEmojis = (array) $content->userData->total->emoji_dict;
-                        foreach($favEmojis as $emoji => $count) {
-                            if ($top20Count > 20) break;
-
-                            echo $top20Count . ". " . json_decode($emoji) . " (" . $count . "x)<br>";
-                            $top20Count += 1;
-                        }
-                        
-                    ?>
-                    </div>
+                    </ol>
                 </div>
-                <div class="column"></div>
             </div>
-
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="user-text-stats"></div>
+            <div class="column">
+                <h3 class="title is-3">Top 20 Emojis</h2>
+                <div class="content">
+                    <ol type="1">
+                        <?php 
+                            $top20Count = 1;
+                            $favEmojis = (array) $content->userData->total->emoji_dict;
+                            foreach($favEmojis as $emoji => $count) {
+                                if ($top20Count > 20) break;
+                                $size = round(pow(1.1021861, $top20Count));
+                                echo "<li class='top-word is-size-".$size."'>" . $top20Count . ". " . json_decode($emoji) . " (" . $count . "x)</li>";
+                                $top20Count += 1;
+                            }
+                        ?>
+                    </ol>
                 </div>
-                <div class="column"></div>
             </div>
-
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="chat-volume-hourly"></div>
-                </div>
-                <div class="column"></div>
-            </div>
-
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="chat-volume-daily"></div>
-                </div>
-                <div class="column"></div>
-            </div>
-
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="chat-volume-monthly"></div>
-                </div>
-                <div class="column"></div>
-            </div>
-
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="weekday-daytime-heatmap"></div>
-                </div>
-                <div class="column"></div>
-            </div>
-
-            <div class="columns" style="margin-bottom:0px;">
-                <div class="column"></div>
-                <div class="column is-two-thirds">
-                    <div id="response-heatmap"></div>
-                </div>
-                <div class="column"></div>
-            </div>
-            
-            <!-- 
-            <div class="columns">
-                <div class="column"></div>
-                <div class="column is-half">
-                    <h1 class="title is-centered">WhatsApp Chat Analyzer</h1>
-                    <h2 class="subtitle">Upload your chat history and get exciting insights!</h2>
-                </div>
-                <div class="column"></div>
-            </div>
-
-            <br>
-            <br>
-
-            <form id="upload-form" action="" method="POST" enctype="multipart/form-data">
-                
-                <input type="hidden" name="MAX_FILE_SIZE" value="100000000" />
-                <div class="columns">
-                    <div class="column"></div>
-                    <div class="column">
-                        <div class="field">
-                            <div class="file is-centered is-boxed is-info has-name">
-                                <label class="file-label">
-                                <input id="upload-file" class="file-input" type="file" name="upfile">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                    <i class="fas fa-upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Select chat file
-                                    </span>
-                                </span>
-                                <span id="filename" class="file-name">Please choose file</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column"></div>
-                </div>
-
-                <br>
-
-                <div class="columns">
-                    <div class="column"></div>
-                    <div class="column">
-                        <a id="upload-btn" class="button is-success is-fullwidth is-large" disabled>Upload</a>
-                        <div id="progress-bar">
-                            <progress class="progress is-primary" value="15" max="100"></progress>
-                        </div>
-                    </div>
-                    <div class="column"></div>
-                </div>
-            </form>
         </div>
-    </div> -->
 
-    <div class="footer">
-        <div class="container">
+        <div class="columns" style="margin-bottom:0px;">
+            <div class="column"></div>
+            <div class="column is-two-thirds">
+                <h3 class="title is-3">Text statistics</h2>
+                <div id="user-text-stats"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns" style="margin-bottom:0px;">
+            <div class="column"></div>
+            <div class="column is-two-thirds">
+                <div id="chat-volume-hourly"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns" style="margin-bottom:0px;">
+            <div class="column"></div>
+            <div class="column is-two-thirds">
+                <div id="chat-volume-daily"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns" style="margin-bottom:0px;">
+            <div class="column"></div>
+            <div class="column is-two-thirds">
+                <div id="chat-volume-monthly"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns" style="margin-bottom:0px;">
+            <div class="column"></div>
+            <div class="column is-two-thirds">
+                <div id="weekday-daytime-heatmap"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <div class="columns" style="margin-bottom:0px;">
+            <div class="column"></div>
+            <div class="column is-two-thirds">
+                <div id="response-heatmap"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+        
+        <!-- 
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column is-half">
+                <h1 class="title is-centered">WhatsApp Chat Analyzer</h1>
+                <h2 class="subtitle">Upload your chat history and get exciting insights!</h2>
+            </div>
+            <div class="column"></div>
+        </div>
+
+        <br>
+        <br>
+
+        <form id="upload-form" action="" method="POST" enctype="multipart/form-data">
+            
+            <input type="hidden" name="MAX_FILE_SIZE" value="100000000" />
             <div class="columns">
                 <div class="column"></div>
-                <div class="column" style="text-align: center;">
-                    &copy; <!--2019 bruness.org-->
+                <div class="column">
+                    <div class="field">
+                        <div class="file is-centered is-boxed is-info has-name">
+                            <label class="file-label">
+                            <input id="upload-file" class="file-input" type="file" name="upfile">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    Select chat file
+                                </span>
+                            </span>
+                            <span id="filename" class="file-name">Please choose file</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="column"></div>
             </div>
+
+            <br>
+
+            <div class="columns">
+                <div class="column"></div>
+                <div class="column">
+                    <a id="upload-btn" class="button is-success is-fullwidth is-large" disabled>Upload</a>
+                    <div id="progress-bar">
+                        <progress class="progress is-primary" value="15" max="100"></progress>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </div>
+        </form>
+    </div>
+</div> -->
+
+<br><br><br>
+
+<div class="footer">
+    <div class="container">
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column" style="text-align: center;">
+                &copy; 2019 CoolestCompanyEver Inc. <!-- 2019 bruness.org -->
+            </div>
+            <div class="column"></div>
         </div>
     </div>
-
 </div>
+
+
 
 
 <script src="js/jq.js"></script>
